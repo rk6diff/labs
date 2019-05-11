@@ -12,10 +12,8 @@ include_directories(${X11_INCLUDE_DIR})
 link_directories(${X11_LIBRARIES})
 
 file(GLOB ALL_SOURCES ./main.c
-        ./utils.c
         ./pulse_circle.c)
-file(GLOB ALL_HEADERS ./pulse_circle.h
-        ./utils.h)
+file(GLOB ALL_HEADERS ./pulse_circle.h)
 
 add_executable(main.out ${ALL_SOURCES} ${ALL_HEADERS})
 
