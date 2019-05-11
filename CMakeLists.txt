@@ -11,9 +11,11 @@ message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 include_directories(${X11_INCLUDE_DIR})
 link_directories(${X11_LIBRARIES})
 
-file(GLOB ALL_SOURCES ./pulse_circle.c
-                      ./main.c)
-file(GLOB ALL_HEADERS ./pulse_circle.h)
+file(GLOB ALL_SOURCES ./main.c
+        ./utils.c
+        ./pulse_circle.c)
+file(GLOB ALL_HEADERS ./pulse_circle.h
+        ./utils.h)
 
 add_executable(main.out ${ALL_SOURCES} ${ALL_HEADERS})
 

@@ -1,26 +1,40 @@
-/* 2 centred spiral header file */
+//
+// Created by astronaut on 11.05.19.
+//
+#ifndef REFACTOR_PULSE_CIRCLE_H
+#define REFACTOR_PULSE_CIRCLE_H
+
+#include <X11/Xlib.h>
+#include <time.h>
+
+#define true 1
+#define false 0
 
 /* Semi-Circle (pi) spiral structure */
 
 typedef struct {
-	int A;		 /* Arc's coordinate (0 t - 180 - 360) */
-	int dA;		 /* Arc in(de)crement (+1 or -1) */
-	XPoint c[2]; /* 2 Semi-circles centeres c[1].x - c[0].x = R0 */
-	int Rm;		 /* Max spiral radius */
-	int R;		 /* Semi-circle radius from 0 to Rm */
-	int dR;		 /* radius in(de)crement (+R0 or -R0) */
+	XPoint c[2];	 // 2 Semi-circles centeres c[1].x - c[0].x = R0
+	int A;			 // Arc's coordinate (0 t - 180 - 360)
+	int dA;			 // Arc in(de)crement (+1 or -1)
+	int r_max;		 // Max spiral radius
+	int radius_min;  // Min spiral radius
+	int radius;		 // Semi-circle radius from 0 to r_max
+	int dR;			 // radius in(de)crement (+R0 or -R0)
 } XPiAr2;
 
 /* Spiral Implementation function */
 
-int max_size(XPiAr2 *pr, char *R0xN);	 /* check max spiral radius */
-int reset(XPiAr2*);				  /* Reset spiral from center & window height */
-int decent(XPiAr2*);			  /* xy-spiral centeres & window width */
-int redraw(XEvent*, GC, XPiAr2*); /* redraw spiral fragment */
-int reverse(XPiAr2*);			  /* reverse spiral direction */
-int amod2pi(XPiAr2*);			  /* Restrick arc from 0 to 2pi range */
-int recent(XPiAr2*);			  /* Change center for semi-circle */
-int twist(Display*, Window, GC, XPiAr2*); /* Rotate by spiral track */
-int rep5355(Display*, int);				  /* On/Off autorepeat + or - key */
-int rapid(XEvent*, int); /* Control to spiral temp & freeze or exit */
-int overlap(XEvent*);	/* check visibility status */
+int max_size(XPiAr2 *pr, char *R0xN);  // check max spiral radius
+int reset(XPiAr2 *);				 // Reset spiral from center & window height
+int decent(XPiAr2 *);				 // xy-spiral centeres & window width
+int redraw(XEvent *, GC, XPiAr2 *);  // redraw spiral fragment
+int recent(XPiAr2 *pr, int is_inc);  // Change center for semi-circle
+int twist(Display *dpy, Window win, GC gc, XPiAr2 *pr,
+		  int *is_inc);		  // Rotate by spiral track
+int rep5355(Display *, int);  // On/Off autorepeat + or - key
+void get_event_code(XEvent *event, int *prev_code);	  // Control to spiral temp & freeze or exit
+int overlap(XEvent *);		  // check visibility status
+
+void delay_func(int number_of_seconds);
+
+#endif  // REFACTOR_PULSE_CIRCLE_H
