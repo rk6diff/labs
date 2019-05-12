@@ -1,4 +1,11 @@
+#ifndef LAB4_LASTH_H_ // эт не просто для красоты
+#define LAB4_LASTH_H_
+
 #include <time.h>
+
+#define true 1
+#define false 0
+#define MIN_SPEED 10
 
 typedef struct {
   XPoint c;  /* 2 Semi-circles centeres c[1].x - c[0].x = R0 */
@@ -19,3 +26,4 @@ int rapid(XEvent*, int);      /* Control to spiral temp & freeze or exit */
 int overlap(XEvent*);                         /* check visibility status */
 void delay_func(int number_of_seconds);
 
+#endif  // LAB4_LASTH_H_

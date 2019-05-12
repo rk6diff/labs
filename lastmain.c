@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "lasth.h"
+const int MAX_SPEED_D = 5;  // не надо define
+							// разный смысл с MIN_SPEED
+
 
 /* Main function */
 
@@ -77,14 +80,15 @@ int main(int argc, char* argv[]) {
 
 	unsigned long emask;       /* window event mask */
 	XEvent event;              /* graphic event structure */
-	int freeze=0;              /* window visibility stop state */ 
-	unsigned delay=0;    /* multi delay period = 2^rate */
-	int multi=1;         /* multi code */
+	int freeze = false;              /* window visibility stop state */
+	int delay = 0;    /* multi delay period = 2^rate */
+	int delay_time = MIN_SPEED;
+	int multi=0;         /* multi code */
 	int g=0;                   /* GC index */
 	emask = (ExposureMask | KeyPressMask | FocusChangeMask |
          	VisibilityChangeMask);
 	XSelectInput(dpy, win, emask);
-	while(multi != 0) { /* Async dispatch event with multic ground */
+	while(multi >= 0) { /* Async dispatch event with multic ground */
 		event.type = 0;
 		XCheckWindowEvent(dpy, win, emask,  &event);
 		switch(event.type) {
@@ -97,16 +101,27 @@ int main(int argc, char* argv[]) {
                     	   break;
      		case FocusOut: rep5355(dpy, AutoRepeatModeOn);
                     	   break;
-     		case KeyPress: if((multi = rapid(&event, delay)) > 0)
-                       	   delay = multi;
-                           break;
+     		case KeyPress: {
+     		  if ((multi = rapid(&event, delay)) >= 0) {
+     		    delay = multi;
+     		    freeze = delay ? false : true;
+     		  }
+              break;
+            }
      		default:       break;
 		} /* switch */
 
-		if((multi < 0) || (freeze < 0))     /* Freeze display spiral  */
-			continue;
+		delay_func(3); // чтобы не напрягать процессор
+		if ((multi <= 0) || freeze) { continue; }  /* Freeze display spiral  */
 
-		delay_func(50);
+		delay_func(MAX_SPEED_D);
+
+		if (delay_time > delay) {
+			--delay_time;
+			continue;
+		}
+		delay_time = 10;
+
 		XClearWindow(dpy, win);
 		twist(dpy, win, gc[g], &r);         
 		XDrawString(dpy, win, gc[g], 8, h, "CTRL-R", 6);

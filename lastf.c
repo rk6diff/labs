@@ -93,31 +93,31 @@ int rapid(XEvent* ev, int t) {
 	XLookupString((XKeyEvent* ) ev, NULL, 0, code, NULL);
 	switch(code[0]) {
 		case XK_plus:   /* accelerate tempo or decrease delay */
-		case XK_KP_Add: if(t==-32) t=1;
-		  				if(t < 10) 
-                   		++t;
-                  		break;
-		case XK_minus: /* decerarate tempo or  increase delay */                
-		case XK_KP_Subtract: 
-						if(t==0) t=-32;
-						else
-			   				t--;
-                        break;
+		case XK_KP_Add: {
+			if (t < MIN_SPEED) { ++t; }
+			break;
+		}
+		case XK_minus: /* decerarate tempo or  increase delay */
+		case XK_KP_Subtract: {
+			if (t) { --t; }
+			break;
+		}
 		case XK_r:
-		case XK_R:      if(ev->xkey.state & ControlMask)
-                   		t = 0;  /* Ctrl-R to exit */
-                 		break; 
-		default:        break; /* unfreeze spiral */
+		case XK_R: { /* Ctrl-R to exit */
+			if(ev->xkey.state & ControlMask) { t = -1; }
+			break;
+		}
 	} /* switch */
-	return(t);
+	return t;
 } /* rapid */
 
 /* Check Main Window Visibility to (un)freeze */
 
 int overlap(XEvent* ev) {
-	if(ev->xvisibility.state != VisibilityUnobscured)
-		return(-32);
-	return(0);
+	if (ev->xvisibility.state != VisibilityUnobscured) {
+		return true;
+	}
+	return false;
 } /* overlap */
 
 void delay_func(int number_of_seconds) {
